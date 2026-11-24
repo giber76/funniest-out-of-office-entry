@@ -31,6 +31,20 @@ import { mkdirSync, writeFileSync } from "node:fs";
 const LINE =
   "I'm out until Monday. My inbox just promoted itself, gave itself a raise, and is now my boss.";
 
+// The gate: /output/entry.txt must be UTF-8 text of 1 to 140 characters,
+// not only white space, on a single line. Fail loudly here rather than
+// shipping an invalid entry.
+if (
+  LINE.length < 1 ||
+  LINE.length > 140 ||
+  LINE.trim().length === 0 ||
+  LINE.includes("\n")
+) {
+  throw new Error(
+    `entry line must be a single line of 1-140 characters, got ${LINE.length}`,
+  );
+}
+
 const dest = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
 
 // In the grader /output is a mount point: create it when it is missing,
